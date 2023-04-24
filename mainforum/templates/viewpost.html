@@ -1,0 +1,30 @@
+{% extends "master.html" %}
+{% block title %} {{ post.posttitle }} {% endblock %}
+
+{% block content %}
+<div class="container p-3">
+    <h3>{{ post.posttitle }}</h3>
+    <h6>Posted by {{ post.postusername }}</h6><span> at {{ post.postdate }}</span>
+    <br>
+    <p>{{ post.postmessage }}</p>
+</div>
+<div class="container pt-5">
+    <p>Comments:</p>
+    {% for comment in comments %}
+    {% if comment.postcontent.id == postcontent.id %}
+    <h6>{{ comment.commentusername }}</h6><span> at {{ comment.commentdate }}</span>
+    <br>
+    <p>{{ comment.commentmessage }}</p>
+    {% endif %}
+    {% endfor %}
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="commentusername" value="{{ request.user.username }}">
+        <div class="mb-3">
+            <label for="commentmessage">Comment:</label>
+            <textarea name="commentmessage" class="form-control" id="commentmessage" rows="5"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}

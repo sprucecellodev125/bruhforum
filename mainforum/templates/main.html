@@ -1,0 +1,13 @@
+{% extends "master.html" %} 
+{% block title %} Test forum {% endblock %}
+
+{% block content %}
+<div class="container">
+    {% for post in allpost %}
+    <div class="container p-3">
+      <h3><a class="link-dark text-decoration-none" href="post/{{ post.id }}">{{ post.posttitle }}</a></h3>
+      <h6>Posted by {{ post.postusername }}</h6>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
