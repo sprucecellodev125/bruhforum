@@ -63,8 +63,5 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
-# Django setings
-bruhforum/settings.py
-
 # Database migrations
 mainforum/migrations

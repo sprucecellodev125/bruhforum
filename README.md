@@ -1,4 +1,4 @@
-### Introducing, bruhforum, the most bruhment forum system made in Django ✨ (atleast still usable)
+### Introducing, bruhforum, the most bruhment forum system made in Django (also the source code of https://forum-sprucecellodev125.ssh.surf) ✨
 
 Uh, why the hell I make this? because why not
 
@@ -27,6 +27,6 @@ mainforum | maincomment | Can view maincomment
 ```
 and add newly-created user to that groups. Otherwise they're didn't able to create any post or comment to existing post
 
-If you getting error related to CSRF token (when you're visit the forum with domain/hostname instead of IP address, go to settings.py and look for CSRF_TRUSTED_ORIGINS then put the forum URL there. If still the same, look for CORS_ALLOWED_ORIGINS and CORS_ORIGIN_WHITELIST and do the same thing as what you do with CSRF_TRUSTED_ORIGINS)
+If you getting error related to CSRF token (when you're visit the forum with domain/hostname instead of IP address, go to settings.py and look for CSRF_TRUSTED_ORIGINS then put the forum URL there. If still the same, look for CORS_ALLOWED_ORIGINS and CORS_ORIGIN_WHITELIST and do the same thing as what you do with CSRF_TRUSTED_ORIGINS (Note: replace https://forum-sprucecellodev125.ssh.surf with your actual domain))
 
 The easiest way: _coming soon_

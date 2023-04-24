@@ -126,12 +126,12 @@ CORS_ALLOW_METHODS = [
     "POST"
 ]
 
-CORS_ALLOWED_ORIGINS = [    '']
+CORS_ALLOWED_ORIGINS = [    'https://forum-sprucecellodev125.ssh.surf']
 
-CORS_ORIGIN_WHITELIST = [    '']
+CORS_ORIGIN_WHITELIST = [    'https://forum-sprucecellodev125.ssh.surf']
 
 CSRF_TRUSTED_ORIGINS = [
-    '',
+    'https://forum-sprucecellodev125.ssh.surf',
 ]
 
 # Default primary key field type
