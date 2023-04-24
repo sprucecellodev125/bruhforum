@@ -15,6 +15,7 @@ How-to:
 - Run `pip3 install -r requirements.txt`
 - You have to create superuser first with `python3 manage.py createsuperuser`
 - You also have to run `python3 manage.py collectstatic` to collect static file of admin panel
+- Now run `python3 manage.py makemigrations mainforum` and `python3 manage.py migrate` to set up the database
 - Now finally run `python3 manage.py runserver` and visit http://localhost:8000/admin to add another user (use superuser credentials to login into admin page)
 
 Note when creating another user, make sure they have these permissions so they're able to create a post and comment existing post:
