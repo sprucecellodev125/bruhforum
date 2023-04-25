@@ -55,12 +55,15 @@ def viewpost(request, id):
     return render(request, 'viewpost.html', context)
 
 def createpost(request):
-    form = MainPostForm(request.POST or None)
-    if form.is_valid():
-        postcontent = Mainforum()
-        postcontent.postusername = form.cleaned_data['postusername']
-        postcontent.posttitle = form.cleaned_data['posttitle']
-        postcontent.postmessage = form.cleaned_data['postmessage']
-        postcontent.save()
-        return redirect('viewpost', id=postcontent.id) # type: ignore
-    return render(request, 'createpost.html')
+    if request.user.is_authenticated:
+        form = MainPostForm(request.POST or None)
+        if form.is_valid():
+            postcontent = Mainforum()
+            postcontent.postusername = form.cleaned_data['postusername']
+            postcontent.posttitle = form.cleaned_data['posttitle']
+            postcontent.postmessage = form.cleaned_data['postmessage']
+            postcontent.save()
+            return redirect('viewpost', id=postcontent.id) # type: ignore
+        return render(request, 'createpost.html')
+    else:
+        return redirect('viewlogin')

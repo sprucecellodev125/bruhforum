@@ -17,6 +17,7 @@
     <p>{{ comment.commentmessage }}</p>
     {% endif %}
     {% endfor %}
+    {% if user.is_authenticated %}
     <form method="post">
         {% csrf_token %}
         <input type="hidden" name="commentusername" value="{{ request.user.username }}">
@@ -26,5 +27,8 @@
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    {% else %}
+    <br>
+    {% endif %}
 </div>
 {% endblock %}
