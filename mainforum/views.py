@@ -1,7 +1,13 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.models import User, Group
 from django.shortcuts import render, redirect
 from .models import Mainforum, Maincomment
-from django import forms
+from django import forms, template
+from django.http import HttpResponse
+import logging
+
+logger = logging.getLogger(__name__)
+register = template.Library()
 
 class MainCommentForm(forms.Form):
     commentusername = forms.CharField(max_length=255)
@@ -11,6 +17,10 @@ class MainPostForm(forms.Form):
     postusername = forms.CharField(max_length=255)
     posttitle = forms.CharField(max_length=255)
     postmessage = forms.CharField(widget=forms.Textarea)
+
+@register.filter(name='has_group') 
+def has_group(user, group_name):
+    return user.groups.filter(name=group_name).exists() 
 
 # Create your views here.
 def homepage(request):
@@ -53,6 +63,35 @@ def viewpost(request, id):
                'comments': comments,
                }
     return render(request, 'viewpost.html', context)
+
+def modonly(request):
+    user_groups = request.user.groups.all()
+    is_mod = False
+    for group in user_groups:
+        if group.name == 'Moderator' or group.name == 'Admin':
+            is_mod = True
+            break
+    if is_mod:
+        members = User.objects.filter(groups__name='Member')
+        context = {'members': members}
+        return render(request, 'modpanel.html', context)
+    else:
+        return HttpResponse(status=404)
+
+def banuser(request, id):
+    user_groups = request.user.groups.all()
+    is_mod = False
+    for group in user_groups:
+        if group.name == 'Moderator' or group.name == 'Admin':
+            is_mod = True
+            break
+    if is_mod:
+        target = User.objects.get(id=id)
+        member = Group.objects.get(name='Member')
+        target.groups.remove(member)
+        return redirect('modonly')
+    else:
+        return HttpResponse(status=404)
 
 def createpost(request):
     if request.user.is_authenticated:

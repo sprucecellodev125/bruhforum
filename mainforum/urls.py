@@ -7,4 +7,6 @@ urlpatterns = [
     path('post/<int:id>', views.viewpost, name='viewpost'),
     path('login/', views.viewlogin, name='viewlogin'),
     path('logout/', views.viewlogout, name='viewlogout'),
+    path('mods/', views.modonly, name='modonly'),
+    path('banuser/<int:id>', views.banuser, name='banuser'),
 ]

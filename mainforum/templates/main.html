@@ -8,6 +8,10 @@
       <h3><a class="link-dark text-decoration-none" href="post/{{ post.id }}">{{ post.posttitle }}</a></h3>
       <h6>Posted by {{ post.postusername }}</h6>
     </div>
+    {% empty %}
+    <div class="container p-3">
+      <p>There's nothing to see here</p>
+    </div>
     {% endfor %}
 </div>
 {% endblock %}
