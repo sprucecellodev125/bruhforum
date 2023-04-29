@@ -30,4 +30,4 @@ jobs:
         python manage.py test
     - name: Pull new change on hosted container
       run: |
-        curl -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{"cmd": "pm2 stop 0; git fetch; pm2 start 0", "pwd": "/root/bruhforum"}' https://api.ssh.surf/exec --header 'x-ssh-auth: ${{ secrets.SSH_API_KEY }}'
+        curl -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{"cmd": "pm2 stop 0; killall python3; git fetch; pm2 start 0", "pwd": "/root/bruhforum"}' https://api.ssh.surf/exec --header 'x-ssh-auth: ${{ secrets.SSH_API_KEY }}'

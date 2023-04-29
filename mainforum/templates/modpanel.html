@@ -1,6 +1,29 @@
 {% extends 'modmaster.html' %}
 {% block title %}Forum panel{% endblock title %}
 {% block content %}
+<script>
+  function banUser(userId) {
+    // Send an AJAX POST request to remove the user from the group
+    fetch('/banuser/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: JSON.stringify({ userId: userId })
+    }).then(function(response) {
+      // If the request succeeded, remove the table row
+      if (response.ok) {
+        var row = document.getElementById('row-' + userId);
+        if (row) {
+          row.parentNode.removeChild(row);
+        }
+      }
+    }).catch(function(error) {
+      console.error('Failed to remove user:', error);
+    });
+  }
+</script>
 <div class="container">
   <div class="row">
     <div class="col">
@@ -14,9 +37,9 @@
         </thead>
         <tbody>
           {% for member in members %}
-          <tr>
+          <tr id="row-{{ member.id }}">
             <td>{{ member }}</td>
-            <td><button class="btn btn-danger"><a class="text-decoration-none text-white" href="/banuser/{{ member.id }}">Ban</a></button></td>
+            <td><button class="btn btn-danger" onclick="removeUser({{ member.id }})">Ban</button></td>
           </tr>
           {% endfor %}
         </tbody>

@@ -1,9 +1,11 @@
+import json
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.models import User, Group
 from django.shortcuts import render, redirect
 from .models import Mainforum, Maincomment
 from django import forms, template
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.http import require_POST
 import logging
 
 logger = logging.getLogger(__name__)
@@ -78,7 +80,8 @@ def modonly(request):
     else:
         return HttpResponse(status=404)
 
-def banuser(request, id):
+@require_POST
+def banuser(request):
     user_groups = request.user.groups.all()
     is_mod = False
     for group in user_groups:
@@ -86,12 +89,19 @@ def banuser(request, id):
             is_mod = True
             break
     if is_mod:
-        target = User.objects.get(id=id)
-        member = Group.objects.get(name='Member')
-        target.groups.remove(member)
-        return redirect('modonly')
+        data = json.loads(request.body)
+        userid = data.get('userId')
+        try:
+            target = User.objects.get(id=userid)
+            member = Group.objects.get(name='Member')
+            target.groups.remove(member)
+            return JsonResponse({'status': 'success'})
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'User not found'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': str(e)}, status=500)
     else:
-        return HttpResponse(status=404)
+        return JsonResponse({'status': 'Unauthorized'}, status=401)
 
 def createpost(request):
     if request.user.is_authenticated:
