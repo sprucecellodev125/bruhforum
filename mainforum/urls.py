@@ -9,4 +9,5 @@ urlpatterns = [
     path('logout/', views.viewlogout, name='viewlogout'),
     path('mods/', views.modonly, name='modonly'),
     path('api/banuser/', views.banuser, name='banuser'),
+    path('api/removecomment/', views.removecomment, name='removecomment'),
 ]

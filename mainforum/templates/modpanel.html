@@ -3,25 +3,28 @@
 {% block content %}
 <script>
   function banUser(userId) {
-    // Send an AJAX POST request to remove the user from the group
-    fetch('/api/banuser/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': '{{ csrf_token }}'
-      },
-      body: JSON.stringify({ userId: userId })
-    }).then(function(response) {
-      // If the request succeeded, remove the table row
-      if (response.ok) {
-        var row = document.getElementById('row-' + userId);
-        if (row) {
-          row.parentNode.removeChild(row);
-        }
-      }
-    }).catch(function(error) {
-      console.error('Failed to remove user:', error);
-    });
+    if (confirm("Are you sure you want to ban this user?")) {
+        fetch('/api/banuser/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                'userId': userId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('User has been banned!');
+                document.getElementById('row-' + userId).remove();  // remove the banned user from the table
+            } else {
+                alert('Error occurred while banning user!');
+            }
+        })
+        .catch(error => console.log(error));
+    }
   }
 </script>
 <div class="container">
