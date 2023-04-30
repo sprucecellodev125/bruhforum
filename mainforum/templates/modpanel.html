@@ -4,7 +4,7 @@
 <script>
   function banUser(userId) {
     // Send an AJAX POST request to remove the user from the group
-    fetch('/banuser/', {
+    fetch('/api/banuser/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -39,7 +39,7 @@
           {% for member in members %}
           <tr id="row-{{ member.id }}">
             <td>{{ member }}</td>
-            <td><button class="btn btn-danger" onclick="removeUser({{ member.id }})">Ban</button></td>
+            <td><button class="btn btn-danger" onclick="banUser({{ member.id }})">Ban</button></td>
           </tr>
           {% endfor %}
         </tbody>

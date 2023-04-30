@@ -8,5 +8,5 @@ urlpatterns = [
     path('login/', views.viewlogin, name='viewlogin'),
     path('logout/', views.viewlogout, name='viewlogout'),
     path('mods/', views.modonly, name='modonly'),
-    path('banuser/', views.banuser, name='banuser'),
+    path('api/banuser/', views.banuser, name='banuser'),
 ]
