@@ -50,27 +50,29 @@
             <p class="card-text">{{ comment.commentmessage }}</p>
             <p class="card-subtitle text-muted">{{ comment.commentdate }}</p>
             {% if is_mod %}
-              <button class="btn btn-danger btn-sm float-end" onclick="removeComment({{ comment.id }})">Remove</button>
+             <button class="btn btn-danger btn-sm float-end" onclick="removeComment({{ comment.id }})">Remove</button>
             {% else %}
-              <button class="btn btn-danger btn-sm float-end" onclick="deleteComment({{ comment.id }})">Report</button>
+             <span></span>
             {% endif %}
           </div>
         </div>
       </div>
     {% endif %}
     {% endfor %}
-    {% if user.is_authenticated %}
-    <form method="post">
+    {% if user.is_authenticated and is_banned %}
+    <p>You don't have permission to post comment</p>
+    {% elif user.is_authenticated %}
+      <form method="post">
         {% csrf_token %}
-        <input type="hidden" name="commentusername" value="{{ request.user.username }}">
-        <div class="mb-3">
-            <label for="commentmessage">Comment:</label>
-            <textarea name="commentmessage" class="form-control" id="commentmessage" rows="5"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+          <input type="hidden" name="commentusername" value="{{ request.user.username }}">
+            <div class="mb-3">
+              <label for="commentmessage">Comment:</label>
+              <textarea name="commentmessage" class="form-control" id="commentmessage" rows="5"></textarea>
+            </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
     {% else %}
-    <br>
+    <p>You need to log-in to post comment</p>
     {% endif %}
 </div>
 {% endblock %}

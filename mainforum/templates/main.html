@@ -5,8 +5,19 @@
 <div class="container">
     {% for post in allpost %}
     <div class="container p-3">
-      <h3><a class="link-dark text-decoration-none" href="post/{{ post.id }}">{{ post.posttitle }}</a></h3>
-      <h6>Posted by {{ post.postusername }}</h6>
+      <div class="col-md-12 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title"><a class="link-dark text-decoration-none" href="post/{{ post.id }}">{{ post.posttitle }}</a></h4>
+             <p class="card-subtitle text-muted">Posted by {{ post.postusername }} at {{ post.postdate }}</p>
+             {% if is_mod %}
+              <button class="btn btn-danger btn-sm float-end" onclick="deleteComment({{ comment.id }})">Remove</button>
+             {% else %}
+              <span></span>
+             {% endif %}
+           </div>
+        </div>
+      </div>
     </div>
     {% empty %}
     <div class="container p-3">

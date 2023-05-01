@@ -27,7 +27,23 @@ def has_group(user, group_name):
 # Create your views here.
 def homepage(request):
     allpost = Mainforum.objects.all().order_by('-postdate').values()
-    context = {'allpost': allpost}
+    user_groups = request.user.groups.all()
+    is_mod = False
+    is_banned = True
+    for group in user_groups:
+        if group.name == 'Moderator' or group.name == 'Admin':
+            is_mod = True
+
+        if group.name == 'Member' or group.name == 'Moderator' or group.name == 'Admin':
+            is_banned = False
+        
+        if is_mod and not is_banned:
+            break
+    context = {
+        'allpost': allpost,
+        'is_mod': is_mod,
+        'is_banned': is_banned,
+               }
     return render(request, 'main.html', context)
 
 def viewlogin(request):
@@ -70,9 +86,15 @@ def viewpost(request, id):
     form = MainCommentForm(request.POST or None)
     user_groups = request.user.groups.all()
     is_mod = False
+    is_banned = True
     for group in user_groups:
         if group.name == 'Moderator' or group.name == 'Admin':
             is_mod = True
+
+        if group.name == 'Member' or group.name == 'Moderator' or group.name == 'Admin':
+            is_banned = False
+        
+        if is_mod and not is_banned:
             break
     if form.is_valid():
         comment = Maincomment()
@@ -84,6 +106,7 @@ def viewpost(request, id):
     context = {'post': post,
                'comments': comments,
                'is_mod': is_mod,
+               'is_banned': is_banned,
                }
     return render(request, 'viewpost.html', context)
 
