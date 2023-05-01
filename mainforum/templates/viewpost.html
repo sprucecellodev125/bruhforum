@@ -29,6 +29,12 @@
   }
 </script>
 <div class="container p-3">
+  {% if is_banned and user.is_authenticated %}
+  <div class="alert alert-danger">
+    You have been banned from this forum. You can see any post and comment, but you can't create new post or post a comment
+  </div>
+  <br>
+  {% endif %}
   <div class="col-md-12 mb-3">
     <div class="card">
       <div class="card-body">

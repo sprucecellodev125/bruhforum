@@ -27,6 +27,8 @@ def has_group(user, group_name):
 # Create your views here.
 def homepage(request):
     allpost = Mainforum.objects.all().order_by('-postdate').values()
+    rulestxt = open("rules.txt", "r")
+    rules = rulestxt.read()
     user_groups = request.user.groups.all()
     is_mod = False
     is_banned = True
@@ -43,6 +45,7 @@ def homepage(request):
         'allpost': allpost,
         'is_mod': is_mod,
         'is_banned': is_banned,
+        'rules': rules,
                }
     return render(request, 'main.html', context)
 

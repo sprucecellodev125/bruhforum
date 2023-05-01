@@ -8,8 +8,9 @@
     You have been banned from this forum. You can see any post and comment, but you can't create new post or post a comment
   </div>
   {% endif %}
+  <div class="row">
+    <div class="col-sm-8">
     {% for post in allpost %}
-    <div class="container p-3">
       <div class="col-md-12 mb-3">
         <div class="card">
           <div class="card-body">
@@ -23,11 +24,16 @@
            </div>
         </div>
       </div>
-    </div>
     {% empty %}
-    <div class="container p-3">
+    <div class="col-sm-8">
       <p>There's nothing to see here</p>
     </div>
     {% endfor %}
+    </div>
+    <div class="col-sm-4">
+      <h4>Bruhforum Rules</h4>
+      <p>{{ rules }}</p>
+    </div>
+  </div>
 </div>
 {% endblock %}
