@@ -3,6 +3,11 @@
 
 {% block content %}
 <div class="container">
+  {% if is_banned and user.is_authenticated %}
+  <div class="alert alert-danger">
+    You have been banned from this forum. You can see any post and comment, but you can't create new post or post a comment
+  </div>
+  {% endif %}
     {% for post in allpost %}
     <div class="container p-3">
       <div class="col-md-12 mb-3">

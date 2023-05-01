@@ -67,7 +67,15 @@ def viewlogout(request):
     return redirect('homepage')
 
 def createpost(request):
-    if request.user.is_authenticated:
+    user_groups = request.user.groups.all()
+    is_banned = True
+    for group in user_groups:
+        if group.name == 'Member' or group.name == 'Moderator' or group.name == 'Admin':
+            is_banned = False
+        
+        if not is_banned:
+            break
+    if is_banned == False and request.user.is_authenticated:
         form = MainPostForm(request.POST or None)
         if form.is_valid():
             postcontent = Mainforum()
@@ -77,6 +85,8 @@ def createpost(request):
             postcontent.save()
             return redirect('viewpost', id=postcontent.id) # type: ignore
         return render(request, 'createpost.html')
+    elif is_banned == True and request.user.is_authenticated:
+        return redirect('homepage')
     else:
         return redirect('viewlogin')
 
@@ -112,11 +122,11 @@ def viewpost(request, id):
 
 def modonly(request):
     user_groups = request.user.groups.all()
-    is_mod = True
+    is_mod = False
     for group in user_groups:
         if group.name == 'Moderator' or group.name == 'Admin':
             is_mod = True
-            break
+
     if is_mod:
         members = User.objects.filter(groups__name='Member')
         context = {'members': members}
