@@ -31,20 +31,17 @@ def homepage(request):
     rules = rulestxt.read()
     user_groups = request.user.groups.all()
     is_mod = False
-    is_banned = True
+    is_disabled = True
     for group in user_groups:
         if group.name == 'Moderator' or group.name == 'Admin':
             is_mod = True
 
-        if group.name == 'Member' or group.name == 'Moderator' or group.name == 'Admin':
-            is_banned = False
-        
-        if is_mod and not is_banned:
+        if is_mod:
             break
+
     context = {
         'allpost': allpost,
         'is_mod': is_mod,
-        'is_banned': is_banned,
         'rules': rules,
                }
     return render(request, 'main.html', context)
@@ -62,7 +59,7 @@ def viewlogin(request):
     else:
         error_message = None
 
-    context = {'error_message': error_message}
+    context = {'error': error_message}
     return render(request, 'login.html', context)
 
 def viewlogout(request):
@@ -122,6 +119,13 @@ def viewpost(request, id):
                'is_banned': is_banned,
                }
     return render(request, 'viewpost.html', context)
+
+def viewmember(request, id):
+    member = User.objects.get(id=id)
+    context = {
+        'member': member
+    }
+    return render(request, "user.html", context)
 
 def modonly(request):
     user_groups = request.user.groups.all()

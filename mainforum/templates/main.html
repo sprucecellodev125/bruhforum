@@ -1,13 +1,8 @@
 {% extends "master.html" %} 
-{% block title %} Test forum {% endblock %}
+{% block title %} Bruhforum {% endblock %}
 
 {% block content %}
 <div class="container">
-  {% if is_banned and user.is_authenticated %}
-  <div class="alert alert-danger">
-    You have been banned from this forum. You can see any post and comment, but you can't create new post or post a comment
-  </div>
-  {% endif %}
   <div class="row">
     <div class="col-sm-8">
     {% for post in allpost %}
@@ -36,4 +31,4 @@
     </div>
   </div>
 </div>
-{% endblock %}
+{% endblock content %}
