@@ -18,22 +18,17 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              {% if not is_banned %}
+              {% if user.is_authenticated %}
               <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="/create">Create</a>
               </li>
-              {% else %}
-              <li class="nav-item">
-                <span></span>
-              </li>
-              {% endif %}
               {% if is_mod %}
               <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="{% url 'modonly' %}">Mod panel</a>
               </li>
-              {% else %}
+              {% if is_root and settings.DEBUG %}
               <li class="nav-item">
-                <span></span>
+                <a class="nav-link" aria-current="page" href="/admin">Admin panel</a>
               </li>
               {% endif %}
             </ul>

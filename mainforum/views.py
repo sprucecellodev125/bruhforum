@@ -24,14 +24,15 @@ class MainPostForm(forms.Form):
 def has_group(user, group_name):
     return user.groups.filter(name=group_name).exists() 
 
-# Create your views here.
+# Public content
+# This is where my bad coding practice goes on
+
 def homepage(request):
     allpost = Mainforum.objects.all().order_by('-postdate').values()
     rulestxt = open("rules.txt", "r")
     rules = rulestxt.read()
     user_groups = request.user.groups.all()
     is_mod = False
-    is_disabled = True
     for group in user_groups:
         if group.name == 'Moderator' or group.name == 'Admin':
             is_mod = True
@@ -67,15 +68,7 @@ def viewlogout(request):
     return redirect('homepage')
 
 def createpost(request):
-    user_groups = request.user.groups.all()
-    is_banned = True
-    for group in user_groups:
-        if group.name == 'Member' or group.name == 'Moderator' or group.name == 'Admin':
-            is_banned = False
-        
-        if not is_banned:
-            break
-    if is_banned == False and request.user.is_authenticated:
+    if request.user.is_authenticated:
         form = MainPostForm(request.POST or None)
         if form.is_valid():
             postcontent = Mainforum()
@@ -83,10 +76,8 @@ def createpost(request):
             postcontent.posttitle = form.cleaned_data['posttitle']
             postcontent.postmessage = form.cleaned_data['postmessage']
             postcontent.save()
-            return redirect('viewpost', id=postcontent.id) # type: ignore
+            return redirect('viewpost', id=postcontent.id)
         return render(request, 'createpost.html')
-    elif is_banned == True and request.user.is_authenticated:
-        return redirect('homepage')
     else:
         return redirect('viewlogin')
 
@@ -120,10 +111,12 @@ def viewpost(request, id):
                }
     return render(request, 'viewpost.html', context)
 
+# Mod-only category
+
 def viewmember(request, id):
     member = User.objects.get(id=id)
     context = {
-        'member': member
+        'member': member,
     }
     return render(request, "user.html", context)
 
