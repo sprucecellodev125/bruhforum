@@ -114,9 +114,12 @@ def viewpost(request, id):
 # Mod-only category
 
 def viewmember(request, id):
-    member = User.objects.get(id=id)
+    member = User.objects.get(pk=id)
+    groups = member.groups.all()
     context = {
         'member': member,
+        'groups': groups,
+        'joined_date': member.date_joined
     }
     return render(request, "user.html", context)
 

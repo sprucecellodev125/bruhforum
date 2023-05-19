@@ -22,10 +22,12 @@
               <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="/create">Create</a>
               </li>
+              {% endif %}
               {% if is_mod %}
               <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="{% url 'modonly' %}">Mod panel</a>
               </li>
+              {% endif %}
               {% if is_root and settings.DEBUG %}
               <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="/admin">Admin panel</a>

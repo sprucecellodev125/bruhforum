@@ -2,9 +2,11 @@
 {% block title %} {{ member.username }} {% endblock title %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <h3>{{ }}</h3>
-    </div>
+<div class="container mt-3">
+        <h3>{{ member.username }}</h3>
+        <p>Joined since {{ joined_date }}</p>
+        {% for group in groups%}
+            <span class="badge bg-info"> {{ group.name }} </span>
+        {% endfor %}
 </div>
 {% endblock content %}
