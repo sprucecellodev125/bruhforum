@@ -35,9 +35,6 @@ def homepage(request):
         if group.name == 'Moderator' or group.name == 'Admin':
             is_mod = True
 
-        if is_mod:
-            break
-
     context = {
         'allpost': allpost,
         'is_mod': is_mod,
@@ -91,11 +88,6 @@ def viewpost(request, id):
         if group.name == 'Moderator' or group.name == 'Admin':
             is_mod = True
 
-        if group.name == 'Member' or group.name == 'Moderator' or group.name == 'Admin':
-            is_banned = False
-        
-        if is_mod and not is_banned:
-            break
     if form.is_valid():
         comment = Maincomment()
         comment.commentusername = form.cleaned_data['commentusername']
