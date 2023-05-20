@@ -6,6 +6,7 @@
     <form method="post">
         {% csrf_token %}
         <input type="hidden" name="postusername" value="{{ request.user.username }}">
+        <input type="hidden" name="postuserid" value="{{ request.user.id }}">
         <div class="mb-3">
             <label for="posttitle">Title of the post:</label>
             <input type="text" name="posttitle" class="form-control" id="posttitle">

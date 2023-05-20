@@ -13,16 +13,14 @@ register = template.Library()
 
 class MainCommentForm(forms.Form):
     commentusername = forms.CharField(max_length=255)
+    commentuserid = forms.IntegerField()
     commentmessage = forms.CharField(widget=forms.Textarea)
 
 class MainPostForm(forms.Form):
     postusername = forms.CharField(max_length=255)
+    postuserid = forms.IntegerField()
     posttitle = forms.CharField(max_length=255)
     postmessage = forms.CharField(widget=forms.Textarea)
-
-@register.filter(name='has_group') 
-def has_group(user, group_name):
-    return user.groups.filter(name=group_name).exists() 
 
 # Public content
 # This is where my bad coding practice goes on
@@ -73,6 +71,7 @@ def createpost(request):
         if form.is_valid():
             postcontent = Mainforum()
             postcontent.postusername = form.cleaned_data['postusername']
+            postcontent.postuserid = form.cleaned_data['postuserid']
             postcontent.posttitle = form.cleaned_data['posttitle']
             postcontent.postmessage = form.cleaned_data['postmessage']
             postcontent.save()
@@ -100,6 +99,7 @@ def viewpost(request, id):
     if form.is_valid():
         comment = Maincomment()
         comment.commentusername = form.cleaned_data['commentusername']
+        comment.commentuserid = form.cleaned_data['commentuserid']
         comment.commentmessage = form.cleaned_data['commentmessage']
         comment.commentforpost = post
         comment.save()
@@ -159,7 +159,29 @@ def banuser(request):
             return JsonResponse({'status': str(e)}, status=500)
     else:
         return JsonResponse({'status': 'Unauthorized'}, status=401)
-    
+
+@require_POST
+def removepost(request):
+    user_groups = request.user.groups.all()
+    is_mod = False
+    for group in user_groups:
+        if group.name == 'Moderator' or group.name == 'Admin':
+            is_mod = True
+            break
+    if is_mod:
+        data = json.loads(request.body)
+        postid = data.get('postId')
+        try:
+            post = Mainforum.objects.get(id=postid)
+            post.delete()
+            return JsonResponse({'status': 'success'})
+        except Mainforum.DoesNotExist:
+            return JsonResponse({'status': 'Post not found'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': str(e)}, status=500)
+    else:
+        return JsonResponse({'status': 'Unauthorized'}, status=401)
+
 @require_POST
 def removecomment(request):
     user_groups = request.user.groups.all()

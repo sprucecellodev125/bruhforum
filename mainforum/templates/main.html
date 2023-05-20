@@ -2,17 +2,42 @@
 {% block title %} Bruhforum {% endblock %}
 
 {% block content %}
+<script>
+  function removePost(postId) {
+    if (confirm("Are you sure you want to delete this post?")) {
+        fetch('/api/removepost/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                'postId': postId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById('postrow-' + postId).remove();  // remove the banned user from the table
+            } else {
+                alert('Error occurred while removing post!');
+            }
+        })
+        .catch(error => console.log(error));
+    }
+  }
+</script>
 <div class="container">
   <div class="row">
     <div class="col-sm-8">
     {% for post in allpost %}
-      <div class="col-md-12 mb-3">
+      <div class="col-md-12 mb-3" id="postrow-{{ post.id }}">
         <div class="card">
           <div class="card-body">
             <h4 class="card-title"><a class="link-dark text-decoration-none" href="post/{{ post.id }}">{{ post.posttitle }}</a></h4>
              <p class="card-subtitle text-muted">Posted by {{ post.postusername }} at {{ post.postdate }}</p>
              {% if is_mod %}
-              <button class="btn btn-danger btn-sm float-end" onclick="deleteComment({{ comment.id }})">Remove</button>
+              <button class="btn btn-danger btn-sm float-end" onclick="removePost({{ post.id }})">Remove</button>
              {% else %}
               <span></span>
              {% endif %}
