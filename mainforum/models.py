@@ -3,16 +3,23 @@ from django.utils import timezone
 
 # Create your models here.
 
-class Mainforum(models.Model):
+
+class Core(models.Model):
+    rules = models.TextField()
+    about = models.TextField()
+
+
+class Post(models.Model):
     postusername = models.CharField(max_length=255)
     postuserid = models.IntegerField(null=True)
     postmessage = models.TextField()
     posttitle = models.CharField(max_length=255)
     postdate = models.DateTimeField(default=timezone.now)
 
-class Maincomment(models.Model):
+
+class Comment(models.Model):
     commentusername = models.CharField(max_length=255)
     commentuserid = models.IntegerField(null=True)
     commentmessage = models.TextField()
-    commentforpost = models.ForeignKey(Mainforum, on_delete=models.CASCADE)
+    commentforpost = models.ForeignKey(Post, on_delete=models.CASCADE)
     commentdate = models.DateTimeField(default=timezone.now)

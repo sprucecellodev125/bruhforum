@@ -1,8 +1,9 @@
 import json
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.models import User, Group
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import Mainforum, Maincomment
+from .models import Post, Comment
 from django import forms, template
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
@@ -11,12 +12,14 @@ import logging
 logger = logging.getLogger(__name__)
 register = template.Library()
 
-class MainCommentForm(forms.Form):
+
+class CommentForm(forms.Form):
     commentusername = forms.CharField(max_length=255)
     commentuserid = forms.IntegerField()
     commentmessage = forms.CharField(widget=forms.Textarea)
 
-class MainPostForm(forms.Form):
+
+class PostForm(forms.Form):
     postusername = forms.CharField(max_length=255)
     postuserid = forms.IntegerField()
     posttitle = forms.CharField(max_length=255)
@@ -25,8 +28,9 @@ class MainPostForm(forms.Form):
 # Public content
 # This is where my bad coding practice goes on
 
+
 def homepage(request):
-    allpost = Mainforum.objects.all().order_by('-postdate').values()
+    allpost = Post.objects.all().order_by('-postdate').values()
     rulestxt = open("rules.txt", "r")
     rules = rulestxt.read()
     user_groups = request.user.groups.all()
@@ -39,8 +43,9 @@ def homepage(request):
         'allpost': allpost,
         'is_mod': is_mod,
         'rules': rules,
-               }
+    }
     return render(request, 'main.html', context)
+
 
 def viewlogin(request):
     if request.method == 'POST':
@@ -58,29 +63,30 @@ def viewlogin(request):
     context = {'error': error_message}
     return render(request, 'login.html', context)
 
+
 def viewlogout(request):
     logout(request)
     return redirect('homepage')
 
+
+@login_required
 def createpost(request):
-    if request.user.is_authenticated:
-        form = MainPostForm(request.POST or None)
-        if form.is_valid():
-            postcontent = Mainforum()
-            postcontent.postusername = form.cleaned_data['postusername']
-            postcontent.postuserid = form.cleaned_data['postuserid']
-            postcontent.posttitle = form.cleaned_data['posttitle']
-            postcontent.postmessage = form.cleaned_data['postmessage']
-            postcontent.save()
-            return redirect('viewpost', id=postcontent.id)
-        return render(request, 'createpost.html')
-    else:
-        return redirect('viewlogin')
+    form = PostForm(request.POST or None)
+    if form.is_valid():
+        postcontent = Post()
+        postcontent.postusername = form.cleaned_data['postusername']
+        postcontent.postuserid = form.cleaned_data['postuserid']
+        postcontent.posttitle = form.cleaned_data['posttitle']
+        postcontent.postmessage = form.cleaned_data['postmessage']
+        postcontent.save()
+        return redirect('viewpost', id=postcontent.id)
+    return render(request, 'createpost.html')
+
 
 def viewpost(request, id):
-    post = Mainforum.objects.get(id=id)
-    comments = Maincomment.objects.filter(commentforpost=post)
-    form = MainCommentForm(request.POST or None)
+    post = Post.objects.get(id=id)
+    comments = Comment.objects.filter(commentforpost=post)
+    form = CommentForm(request.POST or None)
     user_groups = request.user.groups.all()
     is_mod = False
     is_banned = True
@@ -89,13 +95,13 @@ def viewpost(request, id):
             is_mod = True
 
     if form.is_valid():
-        comment = Maincomment()
+        comment = Comment()
         comment.commentusername = form.cleaned_data['commentusername']
         comment.commentuserid = form.cleaned_data['commentuserid']
         comment.commentmessage = form.cleaned_data['commentmessage']
         comment.commentforpost = post
         comment.save()
-        return redirect('viewpost', id=post.id) # type: ignore
+        return redirect('viewpost', id=post.id)
     context = {'post': post,
                'comments': comments,
                'is_mod': is_mod,
@@ -104,6 +110,7 @@ def viewpost(request, id):
     return render(request, 'viewpost.html', context)
 
 # Mod-only category
+
 
 def viewmember(request, id):
     member = User.objects.get(pk=id)
@@ -114,6 +121,7 @@ def viewmember(request, id):
         'joined_date': member.date_joined
     }
     return render(request, "user.html", context)
+
 
 def modonly(request):
     user_groups = request.user.groups.all()
@@ -128,6 +136,7 @@ def modonly(request):
         return render(request, 'modpanel.html', context)
     else:
         return HttpResponse(status=404)
+
 
 @require_POST
 def banuser(request):
@@ -152,6 +161,7 @@ def banuser(request):
     else:
         return JsonResponse({'status': 'Unauthorized'}, status=401)
 
+
 @require_POST
 def removepost(request):
     user_groups = request.user.groups.all()
@@ -164,15 +174,16 @@ def removepost(request):
         data = json.loads(request.body)
         postid = data.get('postId')
         try:
-            post = Mainforum.objects.get(id=postid)
+            post = Post.objects.get(id=postid)
             post.delete()
             return JsonResponse({'status': 'success'})
-        except Mainforum.DoesNotExist:
+        except Post.DoesNotExist:
             return JsonResponse({'status': 'Post not found'}, status=400)
         except Exception as e:
             return JsonResponse({'status': str(e)}, status=500)
     else:
         return JsonResponse({'status': 'Unauthorized'}, status=401)
+
 
 @require_POST
 def removecomment(request):
@@ -186,10 +197,10 @@ def removecomment(request):
         data = json.loads(request.body)
         commentid = data.get('commentId')
         try:
-            comment = Maincomment.objects.get(id=commentid)
+            comment = Comment.objects.get(id=commentid)
             comment.delete()
             return JsonResponse({'status': 'success'})
-        except Mainforum.DoesNotExist:
+        except Comment.DoesNotExist:
             return JsonResponse({'status': 'Comment not found'}, status=400)
         except Exception as e:
             return JsonResponse({'status': str(e)}, status=500)

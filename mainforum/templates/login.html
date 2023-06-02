@@ -6,7 +6,7 @@
 <div class="container">
   <h3>Login</h3>
   {% if error %}
-  <p>{{ error }}</p>
+  <div class="alert alert-danger">{{ error }}</div>
   {% endif %}
   <form method="post">
     {% csrf_token %}

@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Mainforum, Maincomment
+from .models import Core, Post, Comment
 
 # Register your models here.
-admin.site.register(Mainforum)
-admin.site.register(Maincomment)
+admin.site.register(Core)
+admin.site.register(Post)
+admin.site.register(Comment)
