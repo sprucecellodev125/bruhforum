@@ -1,9 +1,9 @@
 from django.conf import settings
+from .models import Core
 
 def global_context(request):
-    # Add your context variables here
     context = {
         'DEBUG': settings.DEBUG,
-        # Add more variables as needed
+        'core': Core.objects.all()
     }
     return context

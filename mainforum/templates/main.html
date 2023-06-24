@@ -1,6 +1,6 @@
 <!-- prettier-ignore -->
 {% extends "master.html" %}
-{% block title %} Bruhforum {% endblock %}
+{% block title %} {{ core.name }} {% endblock %}
 {% block content %}
 
 <script>
@@ -60,8 +60,14 @@
     {% endfor %}
   </div>
   <div class="col-sm-4">
-    <h4>Bruhforum Rules</h4>
-    <p>{{ rules }}</p>
+    <div class="container-fluid">
+      <h4>Rules</h4>
+      <p>{{ core.rules|linebreaksbr }}</p>
+    </div>
+    <div class="container-fluid">
+      <h4>About this forum</h4>
+      <p>{{ core.about|linebreaksbr }}</p>
+    </div>
   </div>
 </div>
 

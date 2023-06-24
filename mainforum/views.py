@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import Post, Comment
+from .models import Core, Post, Comment
 from django import forms, template
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
@@ -25,15 +25,33 @@ class PostForm(forms.Form):
     posttitle = forms.CharField(max_length=255)
     postmessage = forms.CharField(widget=forms.Textarea)
 
-# Public content
-# This is where my bad coding practice goes on
 
+class SetupForm(forms.Form):
+    rules = forms.CharField(widget=forms.Textarea)
+    about = forms.CharField(widget=forms.Textarea)
+    name = forms.CharField(max_length=255)
+
+
+def setup(request):
+    form = SetupForm(request.POST or None)
+    if form.is_valid():
+        corecontent = Core()
+        corecontent.name = form.cleaned_data['name']
+        corecontent.about = form.cleaned_data['about']
+        corecontent.rules = form.cleaned_data['rules']
+        corecontent.needsetup = False
+        corecontent.save()
+        return redirect('homepage')
+    return render(request, 'setup.html', {'form': form})
 
 def homepage(request):
     allpost = Post.objects.all().order_by('-postdate').values()
-    rulestxt = open("rules.txt", "r")
-    rules = rulestxt.read()
+    try:
+        core = Core.objects.get()
+    except Core.DoesNotExist:
+        core = None
     user_groups = request.user.groups.all()
+    need_setup = Core.objects.values_list('needsetup', flat=True).first()
     is_mod = False
     for group in user_groups:
         if group.name == 'Moderator' or group.name == 'Admin':
@@ -42,10 +60,16 @@ def homepage(request):
     context = {
         'allpost': allpost,
         'is_mod': is_mod,
-        'rules': rules,
+        'core': core,
     }
-    return render(request, 'main.html', context)
 
+    match need_setup:
+        case True:
+            return redirect('setup')
+        case False:
+            return render(request, 'main.html', context)
+        case None:
+            return redirect('setup')
 
 def viewlogin(request):
     if request.method == 'POST':
@@ -87,6 +111,7 @@ def viewpost(request, id):
     post = Post.objects.get(id=id)
     comments = Comment.objects.filter(commentforpost=post)
     form = CommentForm(request.POST or None)
+    need_setup = Core.objects.values_list('needsetup', flat=True).first()
     user_groups = request.user.groups.all()
     is_mod = False
     is_banned = True
@@ -107,10 +132,11 @@ def viewpost(request, id):
                'is_mod': is_mod,
                'is_banned': is_banned,
                }
-    return render(request, 'viewpost.html', context)
-
-# Mod-only category
-
+    match need_setup:
+        case True:
+            return redirect(homepage)
+        case False:
+            return render(request, 'viewpost.html', context)
 
 def viewmember(request, id):
     member = User.objects.get(pk=id)
@@ -125,17 +151,20 @@ def viewmember(request, id):
 
 def modonly(request):
     user_groups = request.user.groups.all()
+    need_setup = Core.objects.values_list('needsetup', flat=True).first()
     is_mod = False
     for group in user_groups:
         if group.name == 'Moderator' or group.name == 'Admin':
             is_mod = True
 
-    if is_mod:
+    if is_mod and need_setup == False :
         members = User.objects.filter(groups__name='Member')
         context = {'members': members}
         return render(request, 'modpanel.html', context)
-    else:
+    elif need_setup == False:
         return HttpResponse(status=404)
+    else:
+        return redirect(homepage)
 
 
 @require_POST

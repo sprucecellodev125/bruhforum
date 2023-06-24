@@ -31,7 +31,7 @@
 <div class="card">
   <div class="card-body">
     <h4 class="card-title">{{ post.posttitle }}</h4>
-    <p class="card-text">{{ post.postmessage }}</p>
+    <p class="card-text">{{ post.postmessage|linebreaksbr }}</p>
     <p class="card-subtitle text-muted">
       Posted by
       <a
@@ -60,7 +60,7 @@
             >{{ comment.commentusername }}</a
           >
         </h6>
-        <p class="card-text">{{ comment.commentmessage }}</p>
+        <p class="card-text">{{ comment.commentmessage|linebreaksbr }}</p>
         <p class="card-subtitle text-muted">{{ comment.commentdate }}</p>
         {% if is_mod %}
         <button

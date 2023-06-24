@@ -12,4 +12,5 @@ urlpatterns = [
     path('api/banuser/', views.banuser, name='banuser'),
     path('api/removecomment/', views.removecomment, name='removecomment'),
     path('api/removepost/', views.removepost, name='removepost'),
+    path('setup/', views.setup, name='setup')
 ]
