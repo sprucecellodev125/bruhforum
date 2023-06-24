@@ -63,13 +63,10 @@ def homepage(request):
         'core': core,
     }
 
-    match needsetup:
-        case True:
-            return redirect('setup')
-        case False:
-            return render(request, 'main.html', context)
-        case None:
-            return redirect('setup')
+    if needsetup == False:
+        return render(request, 'main.html', context)
+    else:
+        return redirect('setup')
 
 def viewlogin(request):
     if request.method == 'POST':
@@ -111,7 +108,7 @@ def viewpost(request, id):
     post = Post.objects.get(id=id)
     comments = Comment.objects.filter(commentforpost=post)
     form = CommentForm(request.POST or None)
-    need_setup = Core.objects.values_list('needsetup', flat=True).first()
+    needsetup = Core.objects.values_list('needsetup', flat=True).first()
     user_groups = request.user.groups.all()
     is_mod = False
     is_banned = True
@@ -132,11 +129,11 @@ def viewpost(request, id):
                'is_mod': is_mod,
                'is_banned': is_banned,
                }
-    match need_setup:
-        case True:
-            return redirect(homepage)
-        case False:
-            return render(request, 'viewpost.html', context)
+    
+    if needsetup == False:
+        return render(request, 'viewpost.html', context)
+    else:
+        return redirect('setup')
 
 def viewmember(request, id):
     member = User.objects.get(pk=id)
