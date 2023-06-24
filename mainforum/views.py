@@ -51,7 +51,7 @@ def homepage(request):
     except Core.DoesNotExist:
         core = None
     user_groups = request.user.groups.all()
-    need_setup = Core.objects.values_list('needsetup', flat=True).first()
+    needsetup = Core.objects.values_list('needsetup', flat=True).first()
     is_mod = False
     for group in user_groups:
         if group.name == 'Moderator' or group.name == 'Admin':
@@ -63,7 +63,7 @@ def homepage(request):
         'core': core,
     }
 
-    match need_setup:
+    match needsetup:
         case True:
             return redirect('setup')
         case False:
