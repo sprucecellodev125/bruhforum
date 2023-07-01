@@ -33,6 +33,7 @@ class SetupForm(forms.Form):
 
 
 def setup(request):
+    needsetup = Core.objects.values_list('needsetup', flat=True).first()
     form = SetupForm(request.POST or None)
     if form.is_valid():
         corecontent = Core()
@@ -41,8 +42,13 @@ def setup(request):
         corecontent.rules = form.cleaned_data['rules']
         corecontent.needsetup = False
         corecontent.save()
+        User = get_user_model()
+        User.objects.create_superuser("admin", "", "p@ssw0rd!123")
         return redirect('homepage')
-    return render(request, 'setup.html', {'form': form})
+    if needsetup == True:
+        return render(request, 'setup.html', {'form': form})
+    else:
+        return redirect('homepage')
 
 def homepage(request):
     allpost = Post.objects.all().order_by('-postdate').values()
