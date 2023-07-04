@@ -29,27 +29,15 @@
 </script>
 <div class="container">
   <div class="row">
-    <div class="col-sm-8">
-      <h3>Manage users</h3>
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for member in members %}
-          <tr id="row-{{ member.id }}">
-            <td>{{ member }}</td>
-            <td><button class="btn btn-danger" onclick="banUser({{ member.id }})">Ban</button></td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="col-sm-3">
+      <button type="button" class="btn">Overview</button>
+      <br>
+      <button type="button" class="btn">Members</button>
+      <br>
+      <button type="button" class="btn">Roles</button>
     </div>
-    <div class="col-sm-4">
-      <h3>Reports</h3>
+    <div class="col-sm-8">
+      <p>Test</p>
     </div>
   </div>
 </div>

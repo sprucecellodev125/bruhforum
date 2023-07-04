@@ -19,7 +19,7 @@
         .then((response) => response.json())
         .then((data) => {
           if (data.status === "success") {
-            document.getElementById("postrow-" + postId).remove(); // remove the banned user from the table
+            document.getElementById("postrow-" + postId).remove();
           } else {
             alert("Error occurred while removing post!");
           }
@@ -29,6 +29,11 @@
   }
 </script>
 <div class="row">
+  {% if need_setup %}
+  <div class="alert alert-warning">
+    <strong>Alert!</strong> Setup for this forum hasn't completed yet. <a href="{% url 'modonly' %}" class="alert-link">Go here to set it up</a>.
+  </div>
+  {% endif %}
   <div class="col-sm-8">
     {% for post in allpost %}
     <div class="col-md-12 mb-3" id="postrow-{{ post.id }}">

@@ -31,9 +31,7 @@ class SetupForm(forms.Form):
     about = forms.CharField(widget=forms.Textarea)
     name = forms.CharField(max_length=255)
 
-
 def setup(request):
-    needsetup = Core.objects.values_list('needsetup', flat=True).first()
     form = SetupForm(request.POST or None)
     if form.is_valid():
         corecontent = Core()
@@ -45,10 +43,7 @@ def setup(request):
         User = get_user_model()
         User.objects.create_superuser("admin", "", "p@ssw0rd!123")
         return redirect('homepage')
-    if needsetup == True:
-        return render(request, 'setup.html', {'form': form})
-    else:
-        return redirect('homepage')
+    return render(request, 'setup.html', {'form': form})
 
 def homepage(request):
     allpost = Post.objects.all().order_by('-postdate').values()
@@ -56,23 +51,21 @@ def homepage(request):
         core = Core.objects.get()
     except Core.DoesNotExist:
         core = None
-    user_groups = request.user.groups.all()
-    needsetup = Core.objects.values_list('needsetup', flat=True).first()
+    
+    need_setup = Core.objects.values_list('needsetup', flat=True).first()
     is_mod = False
-    for group in user_groups:
-        if group.name == 'Moderator' or group.name == 'Admin':
+    if request.user.is_staff:
             is_mod = True
 
     context = {
         'allpost': allpost,
         'is_mod': is_mod,
         'core': core,
+        'need_setup': need_setup,
     }
 
-    if needsetup == False:
-        return render(request, 'main.html', context)
-    else:
-        return redirect('setup')
+    return render(request, 'main.html', context)
+
 
 def viewlogin(request):
     if request.method == 'POST':
@@ -98,6 +91,7 @@ def viewlogout(request):
 
 @login_required
 def createpost(request):
+    core = Core.objects.get()
     form = PostForm(request.POST or None)
     if form.is_valid():
         postcontent = Post()
@@ -107,19 +101,18 @@ def createpost(request):
         postcontent.postmessage = form.cleaned_data['postmessage']
         postcontent.save()
         return redirect('viewpost', id=postcontent.id)
-    return render(request, 'createpost.html')
+    return render(request, 'createpost.html', {'core': core})
 
 
 def viewpost(request, id):
     post = Post.objects.get(id=id)
     comments = Comment.objects.filter(commentforpost=post)
     form = CommentForm(request.POST or None)
-    needsetup = Core.objects.values_list('needsetup', flat=True).first()
-    user_groups = request.user.groups.all()
+    need_setup = Core.objects.values_list('needsetup', flat=True).first()
+    core = Core.objects.get()
     is_mod = False
     is_banned = True
-    for group in user_groups:
-        if group.name == 'Moderator' or group.name == 'Admin':
+    if request.user.is_staff:
             is_mod = True
 
     if form.is_valid():
@@ -134,12 +127,12 @@ def viewpost(request, id):
                'comments': comments,
                'is_mod': is_mod,
                'is_banned': is_banned,
+               'need_setup': need_setup,
+               'core': core
                }
-    
-    if needsetup == False:
-        return render(request, 'viewpost.html', context)
-    else:
-        return redirect('setup')
+
+    return render(request, 'viewpost.html', context)
+
 
 def viewmember(request, id):
     member = User.objects.get(pk=id)
@@ -153,31 +146,26 @@ def viewmember(request, id):
 
 
 def modonly(request):
-    user_groups = request.user.groups.all()
-    need_setup = Core.objects.values_list('needsetup', flat=True).first()
     is_mod = False
-    for group in user_groups:
-        if group.name == 'Moderator' or group.name == 'Admin':
-            is_mod = True
+    core = Core.objects.first()
+    if request.user.is_staff:
+        is_mod = True
 
-    if is_mod and need_setup == False :
+    if is_mod:
         members = User.objects.filter(groups__name='Member')
-        context = {'members': members}
+        context = {
+            'members': members,
+            'core': core
+            }
         return render(request, 'modpanel.html', context)
-    elif need_setup == False:
-        return HttpResponse(status=404)
     else:
-        return redirect(homepage)
-
+        return HttpResponse(status=404)
 
 @require_POST
 def banuser(request):
-    user_groups = request.user.groups.all()
     is_mod = False
-    for group in user_groups:
-        if group.name == 'Moderator' or group.name == 'Admin':
-            is_mod = True
-            break
+    if request.user.is_staff:
+        is_mod = True
     if is_mod:
         data = json.loads(request.body)
         userid = data.get('userId')
@@ -196,12 +184,10 @@ def banuser(request):
 
 @require_POST
 def removepost(request):
-    user_groups = request.user.groups.all()
+    
     is_mod = False
-    for group in user_groups:
-        if group.name == 'Moderator' or group.name == 'Admin':
+    if request.user.is_staff:
             is_mod = True
-            break
     if is_mod:
         data = json.loads(request.body)
         postid = data.get('postId')
@@ -219,12 +205,9 @@ def removepost(request):
 
 @require_POST
 def removecomment(request):
-    user_groups = request.user.groups.all()
     is_mod = False
-    for group in user_groups:
-        if group.name == 'Moderator' or group.name == 'Admin':
+    if request.user.is_staff:
             is_mod = True
-            break
     if is_mod:
         data = json.loads(request.body)
         commentid = data.get('commentId')
