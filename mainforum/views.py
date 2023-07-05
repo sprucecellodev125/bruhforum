@@ -145,7 +145,7 @@ def viewmember(request, id):
     return render(request, "user.html", context)
 
 
-def modonly(request):
+def forumsettings(request):
     is_mod = False
     core = Core.objects.first()
     if request.user.is_staff:
