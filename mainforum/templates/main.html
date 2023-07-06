@@ -31,10 +31,8 @@
 <div class="row">
   {% if need_setup %}
   <div class="alert alert-warning">
-    <strong>Alert!</strong> Setup for this forum hasn't completed yet.
-    <a href="{% url 'forumsettings' %}" class="alert-link"
-      >Go here to set it up</a
-    >.
+    <strong>Alert!</strong> Setup for this forum isn't completed yet.
+    <a href="{% url 'overview' %}" class="alert-link">Go here to set it up</a>.
   </div>
   {% endif %}
   <div class="col-sm-8">

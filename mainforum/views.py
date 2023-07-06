@@ -26,24 +26,11 @@ class PostForm(forms.Form):
     postmessage = forms.CharField(widget=forms.Textarea)
 
 
-class SetupForm(forms.Form):
+class OverviewSettings(forms.Form):
     rules = forms.CharField(widget=forms.Textarea)
     about = forms.CharField(widget=forms.Textarea)
     name = forms.CharField(max_length=255)
 
-def setup(request):
-    form = SetupForm(request.POST or None)
-    if form.is_valid():
-        corecontent = Core()
-        corecontent.name = form.cleaned_data['name']
-        corecontent.about = form.cleaned_data['about']
-        corecontent.rules = form.cleaned_data['rules']
-        corecontent.needsetup = False
-        corecontent.save()
-        User = get_user_model()
-        User.objects.create_superuser("admin", "", "p@ssw0rd!123")
-        return redirect('homepage')
-    return render(request, 'setup.html', {'form': form})
 
 def homepage(request):
     allpost = Post.objects.all().order_by('-postdate').values()
@@ -145,21 +132,42 @@ def viewmember(request, id):
     return render(request, "user.html", context)
 
 
-def forumsettings(request):
+def overview(request):
     is_mod = False
     core = Core.objects.first()
+    if request.method == 'POST':
+        form = OverviewSettings(request.POST)
+        if form.is_valid():
+            name_value = form.cleaned_data['name']
+            about_value = form.cleaned_data['about']
+            rules_value = form.cleaned_data['rules']
+
+            core.name = name_value
+            core.about = about_value
+            core.rules = rules_value
+            core.needsetup = False
+            core.save()
+
+            return redirect('overview')
+    else:
+        form = OverviewSettings(initial={
+            'name': core.name,
+            'about': core.about,
+            'rules': core.rules
+        })
+
     if request.user.is_staff:
         is_mod = True
 
     if is_mod:
-        members = User.objects.filter(groups__name='Member')
         context = {
-            'members': members,
-            'core': core
-            }
-        return render(request, 'modpanel.html', context)
+            'core': core,
+            'form': form
+        }
+        return render(request, 'overview.html', context)
     else:
         return HttpResponse(status=404)
+
 
 @require_POST
 def banuser(request):

@@ -5,8 +5,8 @@ from django.utils import timezone
 
 
 class Core(models.Model):
-    rules = models.TextField()
-    about = models.TextField()
+    rules = models.TextField(null=True)
+    about = models.TextField(null=True)
     needsetup = models.BooleanField(default=True)
     name = models.CharField(max_length=255, null=True)
 
