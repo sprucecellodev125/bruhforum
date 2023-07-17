@@ -1,3 +1,4 @@
 Django
 whitenoise
 django-cors-headers
+mysqlclient

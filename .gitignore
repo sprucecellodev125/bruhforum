@@ -43,7 +43,7 @@ coverage.xml
 .pytest_cache/
 cover/
 
-# Django stuff:
+# Django stuff
 *.log
 local_settings.py
 db.sqlite3
@@ -65,3 +65,6 @@ dmypy.json
 
 # Database migrations
 mainforum/migrations
+
+.vscode/settings.json
+bruhforum/settings.py

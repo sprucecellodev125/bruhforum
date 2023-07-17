@@ -169,6 +169,22 @@ def overview(request):
         return HttpResponse(status=404)
 
 
+def roles(request):
+    is_mod = False
+    core = Core.objects.first()
+    roles = Group.objects.all()
+    if request.user.is_staff:
+        is_mod = True
+    if is_mod:
+        context = {
+            'core': core,
+            'roles': roles
+        }
+        return render(request, 'overview.html', context)
+    else:
+        return HttpResponse(status=404)
+    
+
 @require_POST
 def banuser(request):
     is_mod = False
@@ -192,7 +208,6 @@ def banuser(request):
 
 @require_POST
 def removepost(request):
-    
     is_mod = False
     if request.user.is_staff:
             is_mod = True
