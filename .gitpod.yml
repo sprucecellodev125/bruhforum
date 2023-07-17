@@ -9,7 +9,5 @@ tasks:
       pip install -r requirements.txt
       python3 manage.py makemigrations mainforum
       python3 manage.py migrate
-  - command: |
-      python3 manage.py runserver
 
 
