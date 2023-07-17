@@ -1,0 +1,10 @@
+<!-- prettier-ignore -->
+{% extends "master.html" %}
+{% block title %} {{ member.username }} {% endblock title %}
+
+{% block content %}
+<h3>{{ member.username }}</h3>
+<p>Joined since {{ joined_date }}</p>
+{% for group in groups%}
+<span class="badge bg-info"> {{ group.name }} </span>
+{% endfor %} {% endblock content %}

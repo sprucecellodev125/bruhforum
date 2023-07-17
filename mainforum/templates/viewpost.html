@@ -1,0 +1,105 @@
+<!-- prettier-ignore-->
+{% extends "master.html" %}
+{% block title %} {{ post.posttitle }} {% endblock %}
+{% block content %}
+
+<script>
+  function removeComment(commentId) {
+    if (confirm("Are you sure you want to delete this comment?")) {
+      fetch("/api/removecomment/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: JSON.stringify({
+          commentId: commentId,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "success") {
+            document.getElementById("commentrow-" + commentId).remove(); // remove the banned user from the table
+          } else {
+            alert("Error occurred while removing comment!");
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+  }
+</script>
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title">{{ post.posttitle }}</h4>
+    <p class="card-text">{{ post.postmessage|linebreaksbr }}</p>
+    <p class="card-subtitle text-muted">
+      Posted by
+      <a
+        class="text-decoration-none text-muted"
+        href="/users/{{ post.postuserid }}"
+        >{{ post.postusername }}</a
+      >
+      at {{ post.postdate }}
+    </p>
+  </div>
+</div>
+<div class="container pt-3">
+  <p>Comments:</p>
+
+  <!-- prettier-ignore -->
+  {% for comment in comments %}
+  {% if comment.postcontent.id == postcontent.id %}
+
+  <div class="mb-4" id="commentrow-{{ comment.id }}">
+    <div class="card">
+      <div class="card-body">
+        <h6 class="card-title">
+          <a
+            class="text-decoration-none"
+            href="/users/{{ comment.commentuserid }}"
+            >{{ comment.commentusername }}</a
+          >
+        </h6>
+        <p class="card-text">{{ comment.commentmessage|linebreaksbr }}</p>
+        <p class="card-subtitle text-muted">{{ comment.commentdate }}</p>
+        {% if is_mod %}
+        <button
+          class="btn btn-danger btn-sm float-end"
+          onclick="removeComment({{ comment.id }})"
+        >
+          Remove
+        </button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- prettier-ignore -->
+  {% endif %}
+  {% endfor %}
+  {% if user.is_authenticated %}
+
+  <form method="post">
+    {% csrf_token %}
+    <input
+      type="hidden"
+      name="commentusername"
+      value="{{ request.user.username }}"
+    />
+    <input type="hidden" name="commentuserid" value="{{ request.user.id }}" />
+    <div class="mb-3">
+      <label for="commentmessage">Comment:</label>
+      <textarea
+        name="commentmessage"
+        class="form-control"
+        id="commentmessage"
+        rows="5"
+      ></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+  {% else %}
+  <p>You need to log in to post a comment</p>
+  {% endif %}
+</div>
+{% endblock content %}
