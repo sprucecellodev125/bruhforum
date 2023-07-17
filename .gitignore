@@ -48,7 +48,6 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-bruhforum/settings.py
 
 # Environments
 .env
@@ -67,5 +66,5 @@ dmypy.json
 # Database migrations
 mainforum/migrations
 
-# Workspace settings.json
 .vscode/settings.json
+bruhforum/settings.py
