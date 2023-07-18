@@ -10,9 +10,10 @@ Features:
 - Admin panel
 
 How-to:
-- First of all, install Python and pip
+- First, install Python, pip, and MySQL server (if you haven't)
 - Clone this repo (if you haven't) and `cd` into directory where this repo cloned
 - Run `pip3 install -r requirements.txt`
+- Prepare MySQL server, because you need it for Database (fill required field in .env (see .env.example))
 - You also have to run `python3 manage.py collectstatic` to collect static file of admin panel
 - Now run `python3 manage.py makemigrations mainforum` and `python3 manage.py migrate` to set up the database
 - You have to create superuser with `python3 manage.py createsuperuser` and then run `python3 manage.py migrate` just to make sure super user is added
