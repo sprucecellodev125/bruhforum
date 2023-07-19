@@ -9,4 +9,4 @@
 
 ## Installation
 
-* [Page 1](installation/page-1.md)
+* [Requirements](installation/requirements.md)
