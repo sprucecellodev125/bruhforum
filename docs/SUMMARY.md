@@ -7,6 +7,7 @@
 * [⁉ What the heck this thing do?](overview/introduction.md)
 * [✨ Features](overview/features.md)
 
-## Installation
+## Installation (non-Docker) <a href="#non-docker" id="non-docker"></a>
 
-* [Requirements](installation/requirements.md)
+* [Requirements](non-docker/requirements.md)
+* [Installing software](non-docker/installing-software.md)
