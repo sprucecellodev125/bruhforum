@@ -6,11 +6,21 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import Homepage from "./routes/Homepage";
+import Createpost from "./routes/Createpost";
+import Forumsettings from './routes/Forumsettings';
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Homepage />,
+  },
+  {
+    path: "/create",
+    element: <Createpost />,
+  },
+  {
+    path: "/settings/main/",
+    element: <Forumsettings />,
   },
 ]);
 

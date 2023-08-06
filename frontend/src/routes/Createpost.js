@@ -2,9 +2,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
-import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
-function Homepage() {
+function Createpost() {
   return (
     <>
       <Navbar expand="lg" style={{ backgroundColor: `#e3f2fd` }}>
@@ -27,13 +28,23 @@ function Homepage() {
       </Navbar>
       <br />
       <Container>
-        <Alert variant="primary">
-          <strong>Note:</strong> This branch is work-in-progress. No function
-          that require backend working on here
-        </Alert>
+        <h3>Create new post</h3>
+        <Form>
+          <Form.Group className="mb-3" controlId="formTitle">
+            <Form.Label>Title</Form.Label>
+            <Form.Control type="text" />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="formText">
+            <Form.Label>Message</Form.Label>
+            <Form.Control as="textarea" rows={5} />
+          </Form.Group>
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
+        </Form>
       </Container>
     </>
   );
 }
 
-export default Homepage;
+export default Createpost;

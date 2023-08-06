@@ -1,10 +1,13 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import Container from "react-bootstrap/Container";
-import Alert from "react-bootstrap/Alert";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
-function Homepage() {
+function Forumsettings() {
   return (
     <>
       <Navbar expand="lg" style={{ backgroundColor: `#e3f2fd` }}>
@@ -27,13 +30,23 @@ function Homepage() {
       </Navbar>
       <br />
       <Container>
-        <Alert variant="primary">
-          <strong>Note:</strong> This branch is work-in-progress. No function
-          that require backend working on here
-        </Alert>
+        <Row>
+          <Col xs={3}>
+            <Button>
+              Button with top margin
+            </Button>
+            <Button style={{ marginTop: "1rem" }}>
+              Button with top margin
+            </Button>
+            <Button style={{ marginTop: "1rem" }}>
+              Button with top margin
+            </Button>
+          </Col>
+          <Col xs={8}>Test</Col>
+        </Row>
       </Container>
     </>
   );
 }
 
-export default Homepage;
+export default Forumsettings;
