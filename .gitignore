@@ -25,6 +25,9 @@ venv.bak/
 # Secret
 .env
 
+# Database migrations
+migrations/
+
 # misc
 .DS_Store
 .env.local

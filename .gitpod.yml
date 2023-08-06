@@ -5,9 +5,22 @@
 # Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
 
 tasks:
-  - init: |
+  - name: Prepare dependencies and DB
+    init: |
       cd backend && pip install -r requirements.txt
       cd ../frontend && npm install
+      docker pull mysql:8.1.0
+  - name: DB Server
+    command: bash ./scripts/start-mysql.sh
+  - name: API Server
+    init: |
+      sleep 8
+      python3 backend/manage.py makemigrations
+      python3 backend/manage.py migrate
+    command: python3 backend/manage.py runserver
+  - name: Frontend
+    command: cd frontend; npm start
+      
 
 vscode:
     extensions:
@@ -16,3 +29,4 @@ vscode:
     - mtxr.sqltools
     - mtxr.sqltools-driver-mysql
     - ms-python.python
+    - mads-hartmann.bash-ide-vscode
