@@ -10,6 +10,11 @@ coverage
 
 # production
 build
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

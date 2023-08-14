@@ -1,0 +1,37 @@
+version: '3.4'
+
+services:
+  backend:
+    image: python:3.10-bookworm
+    container_name: backend
+    restart: unless-stopped
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    ports:
+      - 8000:8000
+    command: |
+      bash -c "pip install -r requirements.txt && python manage.py makemigrations backend && python manage.py migrate && python manage.py runserver"
+
+  frontend:
+    image: node:18-alpine
+    container_name: frontend
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+    ports:
+      - 3000:3000
+    command: npm run start
+
+  database:
+    image: mysql:8.1.0
+    container_name: database
+    restart: unless-stopped
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+
+volumes:
+  mysql_data:
