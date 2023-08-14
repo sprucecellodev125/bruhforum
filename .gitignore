@@ -22,7 +22,8 @@ venv.bak/
 .venv/
 .venv.bak/
 
-# Secret
+# Secret and Workspace config
+.vscode
 .env
 
 # Database migrations
